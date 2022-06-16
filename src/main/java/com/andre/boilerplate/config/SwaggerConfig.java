@@ -29,7 +29,6 @@ public class SwaggerConfig {
 
 	private static final String ACCESS_TOKEN = "JWT";
 	private static final String RESOURCE_ID = "restservice";
-	private static final String DEFAULT_INCLUDE_PATTERN = "/.*";
 
 	@Value("${security.client-id}")
 	private String CLIENT_ID;
@@ -51,7 +50,7 @@ public class SwaggerConfig {
 	}
 
 	private ApiInfo apiInfo() {
-		return new ApiInfoBuilder().title("Project André - Spring Boilerplate")
+		return new ApiInfoBuilder().title("Project Spring Boilerplate")
 				.description("API Rest with Oauth2 autoconfigure")
 				.contact(
 						new Contact("André Carlos", "https://github.com/andresinho20049", "andresinho200498@gmail.com"))
@@ -61,10 +60,10 @@ public class SwaggerConfig {
 	@Bean
 	public SecurityConfiguration security() {
 	    return SecurityConfigurationBuilder.builder()
+	    	.appName("Spring Oauth2 - Boilerplate")
 	        .clientId(CLIENT_ID)
 	        .clientSecret(CLIENT_SECRET)
 	        .scopeSeparator("")
-	        .appName("Boilerplate - Spring Oauth")
 	        .realm(RESOURCE_ID)
 	        .useBasicAuthenticationWithAccessCodeGrant(true)
 	        .build();
@@ -92,7 +91,6 @@ public class SwaggerConfig {
 	private SecurityContext securityContext() {
 	    return SecurityContext.builder()
 	      .securityReferences(defaultAuth())
-	      .forPaths(PathSelectors.regex(DEFAULT_INCLUDE_PATTERN))
 	      .build();
 	}
 	
