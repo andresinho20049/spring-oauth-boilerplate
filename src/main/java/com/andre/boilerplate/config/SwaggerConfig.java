@@ -31,25 +31,27 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-	public static final String AUTHORIZATION_HEADER = "Authorization";
-	public static final String DEFAULT_INCLUDE_PATTERN = "/.*";
 
-    @Value("${security.client-id}")
-    private String CLIENT_ID;
-    @Value("${security.client-secret}")
-    private String CLIENT_SECRET;
+	private static final String ACCESS_TOKEN = "JWT";
+	private static final String AUTHORIZATION_HEADER = "Authorization";
+	private static final String DEFAULT_INCLUDE_PATTERN = "/.*";
+
+	@Value("${security.client-id}")
+	private String CLIENT_ID;
+
+	@Value("${security.client-secret}")
+	private String CLIENT_SECRET;
 
 	@Bean
 	public Docket api() {
-		
-		return new Docket(DocumentationType.SWAGGER_2)
-				.select()
+
+		return new Docket(DocumentationType.SWAGGER_2).select()
 				.apis(RequestHandlerSelectors.basePackage("com.andre.boilerplate"))
 				.paths(PathSelectors.any())
 				.build()
 				.apiInfo(this.apiInfo())
-				.securitySchemes(Arrays.asList(this.apiKey()))
-				.securityContexts(Arrays.asList(this.securityContext()));
+		        .securitySchemes(Arrays.asList(securityScheme()))
+		        .securityContexts(Arrays.asList(securityContext()));
 
 	}
 
@@ -61,44 +63,53 @@ public class SwaggerConfig {
 				.license("MIT").version("1.0.0").build();
 	}
 
-	@Bean
-	public SecurityConfiguration securityInfo() {
-		return SecurityConfigurationBuilder.builder()
-				.clientId(CLIENT_ID)
-				.clientSecret(CLIENT_SECRET)
-				.scopeSeparator(" ")
-				.useBasicAuthenticationWithAccessCodeGrant(true)
-				.build();
-	}
+    private ApiKey apiKey() {
+        return new ApiKey(ACCESS_TOKEN, AUTHORIZATION_HEADER, "header");
+    }
 
-	private ApiKey apiKey() {
-		return new ApiKey("JWT", AUTHORIZATION_HEADER, "header");
+	@Bean
+	public SecurityConfiguration security() {
+	    return SecurityConfigurationBuilder.builder()
+	        .clientId(CLIENT_ID)
+	        .clientSecret(CLIENT_SECRET)
+	        .scopeSeparator("")
+	        .appName("Boilerplate - Spring Oauth")
+	        .realm("restservice")
+	        .useBasicAuthenticationWithAccessCodeGrant(true)
+	        .build();
 	}
 	
 	private SecurityScheme securityScheme() {
-	    GrantType grantType = new ResourceOwnerPasswordCredentialsGrant("/oauth/token");
+		
+		GrantType grantType = new ResourceOwnerPasswordCredentialsGrant("/api/oauth/token");
 
-	    SecurityScheme oauth = new OAuthBuilder().name("spring_oauth")
+	    SecurityScheme oauth = new OAuthBuilder()
+	    	.name(ACCESS_TOKEN)
 	        .grantTypes(Arrays.asList(grantType))
-	        .scopes(Arrays.asList(this.getScope()))
+	        .scopes(Arrays.asList(scopes()))
 	        .build();
+	    
 	    return oauth;
 	}
-
-	private SecurityContext securityContext() {
-		return SecurityContext.builder().securityReferences(defaultAuth())
-				.forPaths(PathSelectors.regex(DEFAULT_INCLUDE_PATTERN)).build();
+	
+	private AuthorizationScope[] scopes() {
+	    AuthorizationScope[] scopes = { 
+	      new AuthorizationScope("all", "accessEverything") };
+	    return scopes;
 	}
 	
-	private AuthorizationScope[] getScope() {
-		AuthorizationScope authorizationScope = new AuthorizationScope("all", "Access all");
-		AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-		authorizationScopes[0] = authorizationScope;
-		return authorizationScopes;
+	private SecurityContext securityContext() {
+	    return SecurityContext.builder()
+	      .securityReferences(defaultAuth())
+	      .forPaths(PathSelectors.regex(DEFAULT_INCLUDE_PATTERN))
+	      .build();
 	}
-
+	
 	private List<SecurityReference> defaultAuth() {
-		return Lists.newArrayList(new SecurityReference("JWT", this.getScope()));
-	}
+        return Lists.newArrayList(
+            new SecurityReference(ACCESS_TOKEN, scopes()));
+    }
+
+	
 
 }
