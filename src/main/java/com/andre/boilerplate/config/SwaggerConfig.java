@@ -7,14 +7,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.google.common.collect.Lists;
-
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.OAuthBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.AuthorizationScope;
 import springfox.documentation.service.Contact;
 import springfox.documentation.service.GrantType;
@@ -26,14 +23,12 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger.web.SecurityConfiguration;
 import springfox.documentation.swagger.web.SecurityConfigurationBuilder;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
-@EnableSwagger2
 public class SwaggerConfig {
 
 	private static final String ACCESS_TOKEN = "JWT";
-	private static final String AUTHORIZATION_HEADER = "Authorization";
+	private static final String RESOURCE_ID = "restservice";
 	private static final String DEFAULT_INCLUDE_PATTERN = "/.*";
 
 	@Value("${security.client-id}")
@@ -63,10 +58,6 @@ public class SwaggerConfig {
 				.license("MIT").version("1.0.0").build();
 	}
 
-    private ApiKey apiKey() {
-        return new ApiKey(ACCESS_TOKEN, AUTHORIZATION_HEADER, "header");
-    }
-
 	@Bean
 	public SecurityConfiguration security() {
 	    return SecurityConfigurationBuilder.builder()
@@ -74,7 +65,7 @@ public class SwaggerConfig {
 	        .clientSecret(CLIENT_SECRET)
 	        .scopeSeparator("")
 	        .appName("Boilerplate - Spring Oauth")
-	        .realm("restservice")
+	        .realm(RESOURCE_ID)
 	        .useBasicAuthenticationWithAccessCodeGrant(true)
 	        .build();
 	}
@@ -106,7 +97,7 @@ public class SwaggerConfig {
 	}
 	
 	private List<SecurityReference> defaultAuth() {
-        return Lists.newArrayList(
+        return Arrays.asList(
             new SecurityReference(ACCESS_TOKEN, scopes()));
     }
 
