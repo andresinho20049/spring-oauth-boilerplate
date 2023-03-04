@@ -41,7 +41,7 @@ About:
 
 2. Inside the project folder, run
 ```mvn
-    mvn clean install
+    mvn clean && mvn install package
 ```
 
 > In this example I will consider using Eclipse, but just adapt to your use, ok.
@@ -55,7 +55,7 @@ Check lombok and then finish
 
 5. Press start, if you prefer, paste this command in your terminal
 ```mvn
-mvn clean spring-boot:run 
+mvn package spring-boot:run 
 ```
 
 ### Authentication
