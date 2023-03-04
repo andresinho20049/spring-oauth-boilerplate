@@ -6,8 +6,6 @@
 
 Este projeto Spring boot foi desenvolvido com as configurações padrão de autenticação e documentação para servir de base para o desenvolvimento de outros projetos.
 
-> Sou Brasileiro, não achou que eu não fosse subir um overview(opps: visão global) em português né. :)
-
 Sobre:
  - Controle de acesso baseado em regras com JWT
  - Tecnologias utilizadas
@@ -45,7 +43,7 @@ Sobre:
 
 2. Dentro da pasta do projeto, execute
 ```mvn
-    mvn clean install
+    mvn clean && mvn install package
 ```
 
 > Neste exemplo vou considerar o uso do Eclipse, mas basta adaptar ao seu uso, ok.
@@ -59,7 +57,7 @@ Marque lombok e depois click em finish
 
 5. Pressione em start, se preferir cole este comando no seu terminal
 ```mvn
-mvn clean spring-boot:run 
+mvn package spring-boot:run 
 ```
 
 ### Authentication
